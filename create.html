@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create account</title>
+</head>
+<body>
+    <form id="signup-form">
+        <input type="email" id="email" placeholder="Enter email">
+        <input type="password" id="password" placeholder="Enter password">
+        <button type="button" id="create-account">Create account</button>
+    </form>
+</body>
+<script type="module">
+  // Import the functions you need from the SDKs you need
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
+  import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-auth.js";
+  // TODO: Add SDKs for Firebase products that you want to use
+  // https://firebase.google.com/docs/web/setup#available-libraries
+
+  const emailInput = document.getElementById("email");
+  const passwordInput = document.getElementById("password");
+  const createAccountButton = document.getElementById("create-account");
+
+  // Your web app's Firebase configuration
+  const firebaseConfig = {
+    apiKey: "AIzaSyBPZeN_ThzS2uq0D7qSbCej3MCuADQsxFE",
+    authDomain: "renewed-hope-agenda.firebaseapp.com",
+    projectId: "renewed-hope-agenda",
+    storageBucket: "renewed-hope-agenda.firebasestorage.app",
+    messagingSenderId: "682305217203",
+    appId: "1:682305217203:web:9c55c33d6dbb79d0f986c6"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+
+  function createAccount() {
+    const email = emailInput.value.trim();
+    const password = passwordInput.value;
+
+    if (!email || !password) {
+      alert("Please enter both email and password.");
+      return;
+    }
+
+    createUserWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        const user = userCredential.user;
+        alert(`Account created for ${user.email}`);
+      })
+      .catch((error) => {
+        alert(error.message);
+      });
+  }
+
+  createAccountButton.addEventListener("click", createAccount);
+</script>
+</html>

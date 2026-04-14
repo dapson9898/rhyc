@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>RENEWED HOPE AGENDA</h1>
+    <div class="container">
+        <div class="nav">
+            <button class="tab-button active" data-tab="member">Member</button>
+            <button class="tab-button" data-tab="admin">Admin</button>
+        </div>
+        <div class="member-card card active">
+            <h2>Register as a Member</h2>
+            <p>Join our community and make a difference.</p>
+            <!-- Add form or content here -->
+        </div>
+        <div class="admin-card card">
+            <h2>Register as an Admin</h2>
+            <p>Take on leadership roles and manage the agenda.</p>
+            <form action="" class="admin-form">
+                <input type="email" placeholder="example@renewed-hope-agenda.com">
+                <input type="password" placeholder="stRongP@sswoRD">
+                <button>Login</button>
+                <p>Forgot password? Click <a href="#">here</a></p>
+            </form>
+        </div>
+    </div>
+    <script src="index.js"></script>
+</body>
+<script type="module">
+  // Import the functions you need from the SDKs you need
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
+  // TODO: Add SDKs for Firebase products that you want to use
+  // https://firebase.google.com/docs/web/setup#available-libraries
+
+  // Your web app's Firebase configuration
+  const firebaseConfig = {
+    apiKey: "AIzaSyBPZeN_ThzS2uq0D7qSbCej3MCuADQsxFE",
+    authDomain: "renewed-hope-agenda.firebaseapp.com",
+    projectId: "renewed-hope-agenda",
+    storageBucket: "renewed-hope-agenda.firebasestorage.app",
+    messagingSenderId: "682305217203",
+    appId: "1:682305217203:web:9c55c33d6dbb79d0f986c6"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+</script>
+</html>
