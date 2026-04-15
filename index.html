@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="style.css">
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Open+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
 </head>
-<body>
+<body class="page-index">
  
 <!-- HEADER -->
 <header>
@@ -61,7 +61,7 @@
         <input type="checkbox" id="remember"/>
         <label for="remember">Remember Me</label>
       </div>
-      <button class="btn-login" onclick="handleLogin()">LOGIN</button>
+      <button class="btn-login" id="login-button">LOGIN</button>
       <div class="login-links">
         <div><a href="#">Forgot Password?</a></div>
         <div>Need to Register? <a href="create.html">Sign Up Here</a><span class="dot"></span></div>
@@ -76,8 +76,8 @@
       <div class="register-inner">
         <h3>Join RHYC Today!</h3>
         <div class="btn-group">
-          <button class="btn-register" onclick="window.location.href='create.html'">REGISTER NOW</button>
-          <button class="btn-how" onclick="handleHowToJoin()">HOW TO JOIN</button>
+          <button class="btn-register" id="register-button">REGISTER NOW</button>
+          <button class="btn-how" id="how-to-join-button">HOW TO JOIN</button>
         </div>
       </div>
     </div>
@@ -120,19 +120,19 @@
             </div>
           </div>
         </div>
-        <button class="btn-print" onclick="handlePrintID()">PRINT ID CARD</button>
+        <button class="btn-print" id="print-id-button">PRINT ID CARD</button>
       </div>
     </div>
  
     <!-- MEMBER RESOURCES -->
     <div class="card">
-      <div class="id-card-section-title" style="padding: 16px 20px 0;">
+      <div class="id-card-section-title">
         <span class="icon">📋</span> Member Resources
       </div>
       <div class="resources-inner">
         <div class="resources-icon">📄📂</div>
         <p>Access Resources &amp; Updates</p>
-        <button class="btn-resources" onclick="handleResources()">VIEW RESOURCES</button>
+        <button class="btn-resources" id="resources-button">VIEW RESOURCES</button>
       </div>
     </div>
  
@@ -149,63 +149,7 @@
   <span class="copy">© Renewed Hope Youth Coalition, All Rights Reserved.</span>
 </footer>
  
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
-  import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-auth.js";
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyBPZeN_ThzS2uq0D7qSbCej3MCuADQsxFE",
-    authDomain: "renewed-hope-agenda.firebaseapp.com",
-    projectId: "renewed-hope-agenda",
-    storageBucket: "renewed-hope-agenda.appspot.com",
-    messagingSenderId: "682305217203",
-    appId: "1:682305217203:web:9c55c33d6dbb79d0f986c6"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-
-  onAuthStateChanged(auth, (user) => {
-    if (user) {
-      window.location.href = "dashboard.html";
-    }
-  });
-
-  async function handleLogin() {
-    const email = document.getElementById("login-email").value.trim();
-    const password = document.getElementById("login-password").value;
-
-    if (!email || !password) {
-      alert('Please enter your email and password.');
-      return;
-    }
-
-    try {
-      await signInWithEmailAndPassword(auth, email, password);
-      window.location.href = "dashboard.html";
-    } catch (error) {
-      alert(error.message);
-    }
-  }
-
-  function handleHowToJoin() {
-    alert('Opening "How to Join" guide...');
-  }
-
-  function handlePrintID() {
-    alert('Preparing your Membership ID Card for printing...');
-  }
-
-  function handleResources() {
-    alert('Opening Member Resources...');
-    window.location.href = "./admin-login.html";
-  }
-
-  window.handleLogin = handleLogin;
-  window.handleHowToJoin = handleHowToJoin;
-  window.handlePrintID = handlePrintID;
-  window.handleResources = handleResources;
-</script>
+<script type="module" src="./js/portal.js"></script>
  
 </body>
 </html>

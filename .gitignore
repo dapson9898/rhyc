@@ -1,0 +1,9 @@
+/# Local Firebase configuration (keep this file private and do not commit)
+js/firebase-config.js
+js/firebase-config.local.js
+
+# General excludes
+.DS_Store
+*.log
+*.tmp
+*.swp

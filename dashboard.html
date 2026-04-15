@@ -5,45 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>RHYC Member Dashboard</title>
   <link rel="stylesheet" href="style.css" />
-  <style>
-    body { background: #f7f9fb; min-height: 100vh; padding: 0; }
-    .dashboard-shell { max-width: 980px; margin: 0 auto; padding: 24px 20px 40px; }
-    .dashboard-header { display: flex; flex-direction: column; gap: 10px; margin-bottom: 24px; }
-    .dashboard-header h1 { font-family: "Montserrat", sans-serif; color: var(--green-dark); font-size: clamp(2rem, 3vw, 2.6rem); }
-    .dashboard-header p { color: #444; font-size: 1rem; line-height: 1.8; }
-    .dashboard-card { background: #fff; border-radius: 18px; box-shadow: var(--shadow); padding: 26px 28px; }
-    .dashboard-card h2 { font-family: "Montserrat", sans-serif; margin-bottom: 12px; font-size: 1.3rem; color: #1f472e; }
-    .dashboard-card p { color: #333; line-height: 1.75; }
-    .btn-row { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 18px; }
-    .btn-view { padding: 12px 18px; border: none; border-radius: 10px; background: linear-gradient(135deg, var(--green-dark), var(--green-mid)); color: #fff; cursor: pointer; font-weight: 700; }
-    .btn-logout { padding: 12px 18px; border: none; border-radius: 10px; background: linear-gradient(135deg, var(--orange), var(--orange-dark)); color: #fff; cursor: pointer; font-weight: 700; }
-    .idcard-modal { position: fixed; inset: 0; background: rgba(10, 20, 40, 0.7); display: none; align-items: center; justify-content: center; padding: 20px; z-index: 1000; }
-    .idcard-modal.open { display: flex; }
-    .idcard-panel { width: min(100%, 1040px); background: #fff; border-radius: 24px; overflow: hidden; box-shadow: 0 24px 80px rgba(0,0,0,0.25); }
-    .idcard-header { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 22px 26px; background: linear-gradient(135deg, var(--green-dark), var(--green-mid)); color: #fff; }
-    .idcard-header h3 { margin: 0; font-family: "Montserrat", sans-serif; font-size: 1.2rem; }
-    .idcard-body { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; padding: 24px; }
-    .idcard-face { border-radius: 20px; padding: 22px; min-height: 360px; display: flex; flex-direction: column; justify-content: space-between; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.06); }
-    .idcard-front { background: linear-gradient(180deg, #f4faf5 0%, #ffffff 100%); }
-    .idcard-back { background: linear-gradient(180deg, #fff9f4 0%, #fff 100%); }
-    .idcard-logo { display: flex; align-items: center; gap: 10px; }
-    .idcard-logo svg { width: 34px; height: 34px; }
-    .idcard-title { font-family: "Montserrat", sans-serif; font-size: 1rem; font-weight: 800; color: #1a6b3a; text-transform: uppercase; letter-spacing: 0.08em; }
-    .idcard-photo { width: 100%; aspect-ratio: 1 / 1.1; border-radius: 18px; overflow: hidden; background: #e7edf3; display: grid; place-items: center; border: 2px solid #d5e8d8; }
-    .idcard-photo img { width: 100%; height: 100%; object-fit: cover; }
-    .idcard-info { display: grid; gap: 10px; }
-    .idcard-info h4 { margin: 0; font-family: "Montserrat", sans-serif; font-size: 1.15rem; color: #162b1e; }
-    .idcard-info p { margin: 0; color: #3b3b3b; font-size: 0.95rem; line-height: 1.5; }
-    .idcard-note { padding: 18px 18px; border-radius: 16px; background: rgba(220, 238, 209, 0.45); color: #2a3b26; font-size: 0.95rem; line-height: 1.6; }
-    .idcard-signature { display: grid; gap: 6px; margin-top: 18px; }
-    .idcard-signature span { display: block; color: #2f3b2f; font-weight: 700; }
-    .modal-actions { display: flex; flex-wrap: wrap; gap: 12px; padding: 18px 26px 24px; background: #f8fafb; justify-content: flex-end; }
-    .btn-download { padding: 12px 18px; border: none; border-radius: 10px; background: linear-gradient(135deg, var(--orange), var(--orange-dark)); color: #fff; cursor: pointer; font-weight: 700; }
-    .btn-close { padding: 12px 18px; border: 1px solid #cbd5db; border-radius: 10px; background: #fff; color: #334155; cursor: pointer; font-weight: 700; }
-    @media (max-width: 880px) { .idcard-body { grid-template-columns: 1fr; } }
-  </style>
 </head>
-<body>
+<body class="page-dashboard">
   <div class="dashboard-shell">
     <div class="dashboard-header">
       <h1>Member Dashboard</h1>
@@ -54,7 +17,7 @@
       <p id="member-details">Checking your login status...</p>
       <div class="btn-row">
         <button class="btn-view" id="view-id-card-btn">View ID Card</button>
-        <button class="btn-logout" onclick="handleLogout()">Logout</button>
+        <button class="btn-logout" id="logout-button">Logout</button>
       </div>
     </div>
   </div>
@@ -63,7 +26,7 @@
     <div class="idcard-panel">
       <div class="idcard-header">
         <h3>RHYC Membership ID Card</h3>
-        <button class="btn-close" onclick="closeIdCard()">Close</button>
+        <button class="btn-close" id="close-id-card-button">Close</button>
       </div>
       <div class="idcard-body">
         <div class="idcard-face idcard-front">
@@ -77,14 +40,14 @@
               </svg>
               <div class="idcard-title">Renewed Hope Youth Coalition</div>
             </div>
-            <div class="idcard-info" style="margin-top:18px;">
+            <div class="idcard-info">
               <h4 id="idcard-name">Member Name</h4>
               <p id="idcard-role">Role: member</p>
               <p id="idcard-member-id">ID: RHYC0000</p>
             </div>
           </div>
           <div class="idcard-photo" id="idcard-photo">
-            <span style="color:#64748b; font-weight:700;">Photo</span>
+            <span class="idcard-photo-placeholder">Photo</span>
           </div>
         </div>
         <div class="idcard-face idcard-back">
@@ -93,197 +56,16 @@
           </div>
           <div class="idcard-signature">
             <span>Bright Kenneth</span>
-            <span style="font-size:0.95rem; font-weight:500; color:#475569;">National coordinator</span>
+            <span class="idcard-signature-title">National coordinator</span>
           </div>
         </div>
       </div>
       <div class="modal-actions">
-        <button class="btn-download" onclick="downloadIdCard()">Download ID Card</button>
+        <button class="btn-download" id="download-id-card-button">Download ID Card</button>
       </div>
     </div>
   </div>
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
-    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-auth.js";
-    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyBPZeN_ThzS2uq0D7qSbCej3MCuADQsxFE",
-      authDomain: "renewed-hope-agenda.firebaseapp.com",
-      projectId: "renewed-hope-agenda",
-      storageBucket: "renewed-hope-agenda.appspot.com",
-      messagingSenderId: "682305217203",
-      appId: "1:682305217203:web:9c55c33d6dbb79d0f986c6"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
-
-    const welcomeMessage = document.getElementById("welcome-message");
-    const memberDetails = document.getElementById("member-details");
-    const viewIdCardButton = document.getElementById("view-id-card-btn");
-    const idCardModal = document.getElementById("idcard-modal");
-    const idCardName = document.getElementById("idcard-name");
-    const idCardRole = document.getElementById("idcard-role");
-    const idCardMemberId = document.getElementById("idcard-member-id");
-    const idCardPhoto = document.getElementById("idcard-photo");
-    let currentMember = null;
-
-    function renderIdCard(member) {
-      currentMember = member;
-      idCardName.textContent = `${member.firstName} ${member.lastName}`;
-      idCardRole.textContent = `Role: ${member.role || 'member'}`;
-      idCardMemberId.textContent = `ID: ${member.memberId || 'RHYC0000'}`;
-
-      idCardPhoto.innerHTML = member.passportPhotoUrl
-        ? `<img src="${member.passportPhotoUrl}" alt="Member photo" />`
-        : `<span style="color:#64748b; font-weight:700;">Photo</span>`;
-    }
-
-    function openIdCard() {
-      if (!currentMember) return;
-      idCardModal.classList.add("open");
-    }
-
-    function closeIdCard() {
-      idCardModal.classList.remove("open");
-    }
-
-    function escapeText(value) {
-      return String(value || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&apos;');
-    }
-
-    async function fetchImageDataUrl(url) {
-      if (!url) return '';
-      try {
-        const response = await fetch(url);
-        const blob = await response.blob();
-        return await new Promise((resolve) => {
-          const reader = new FileReader();
-          reader.onloadend = () => resolve(reader.result);
-          reader.readAsDataURL(blob);
-        });
-      } catch (error) {
-        return '';
-      }
-    }
-
-    function createIdCardSVG(member, photoDataUrl) {
-      const fullName = `${escapeText(member.firstName)} ${escapeText(member.lastName)}`;
-      const roleText = escapeText(member.role || 'member');
-      const memberId = escapeText(member.memberId || 'RHYC0000');
-      const photoBlock = photoDataUrl
-        ? `<image x="52" y="162" width="196" height="236" href="${photoDataUrl}" preserveAspectRatio="xMidYMid slice" />`
-        : `<text x="150" y="280" text-anchor="middle" fill="#64748b" font-family="Montserrat, sans-serif" font-size="16">PHOTO</text>`;
-
-      return `<?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="640" viewBox="0 0 1100 640">
-  <defs>
-    <linearGradient id="frontBg" x1="0" x2="0" y1="0" y2="1">
-      <stop offset="0%" stop-color="#f4faf5"/>
-      <stop offset="100%" stop-color="#ffffff"/>
-    </linearGradient>
-    <linearGradient id="backBg" x1="0" x2="0" y1="0" y2="1">
-      <stop offset="0%" stop-color="#fff9f4"/>
-      <stop offset="100%" stop-color="#ffffff"/>
-    </linearGradient>
-  </defs>
-  <rect width="540" height="580" x="30" y="30" rx="28" fill="url(#frontBg)" stroke="#1a6b3a" stroke-width="6" />
-  <rect width="520" height="88" x="40" y="40" rx="22" fill="#1a6b3a" />
-  <text x="70" y="92" fill="#fff" font-family="Montserrat, sans-serif" font-size="24" font-weight="800">Renewed Hope Youth Coalition</text>
-  <text x="70" y="130" fill="#daf1d2" font-family="Montserrat, sans-serif" font-size="14" letter-spacing="0.2em">MEMBERSHIP CARD</text>
-  <rect x="50" y="160" width="200" height="240" rx="20" fill="#e7edf3" />
-  ${photoBlock}
-  <text x="280" y="200" fill="#1f472e" font-family="Montserrat, sans-serif" font-size="22" font-weight="700">${fullName}</text>
-  <text x="280" y="245" fill="#3b3b3b" font-family="Open Sans, sans-serif" font-size="18">${roleText}</text>
-  <text x="280" y="290" fill="#3b3b3b" font-family="Open Sans, sans-serif" font-size="16">Member ID: ${memberId}</text>
-  <text x="280" y="340" fill="#7b8b7b" font-family="Open Sans, sans-serif" font-size="14">National Coordinator</text>
-
-  <rect width="520" height="580" x="560" y="30" rx="28" fill="url(#backBg)" stroke="#c0392b" stroke-width="6" />
-  <text x="580" y="120" fill="#bb3f24" font-family="Montserrat, sans-serif" font-size="26" font-weight="700">PROPERTY NOTICE</text>
-  <text x="580" y="170" fill="#3b3b3b" font-family="Open Sans, sans-serif" font-size="16">
-    <tspan x="580" dy="1.6em">This membership ID card is a property of the renewed hope youth coalition.</tspan>
-    <tspan x="580" dy="1.6em">Please protect this card and return it to RHYC if found.</tspan>
-  </text>
-  <text x="580" y="340" fill="#1f472e" font-family="Montserrat, sans-serif" font-size="18" font-weight="700">Bright Kenneth</text>
-  <text x="580" y="370" fill="#475569" font-family="Open Sans, sans-serif" font-size="15">National coordinator</text>
-</svg>`;
-    }
-
-    function svgToPng(svgText, width, height) {
-      return new Promise((resolve, reject) => {
-        const blob = new Blob([svgText], { type: 'image/svg+xml;charset=utf-8' });
-        const url = URL.createObjectURL(blob);
-        const image = new Image();
-        image.crossOrigin = 'anonymous';
-        image.onload = () => {
-          const canvas = document.createElement('canvas');
-          canvas.width = width;
-          canvas.height = height;
-          const ctx = canvas.getContext('2d');
-          ctx.drawImage(image, 0, 0, width, height);
-          URL.revokeObjectURL(url);
-          canvas.toBlob((blob) => {
-            if (blob) {
-              resolve(blob);
-            } else {
-              reject(new Error('Unable to convert SVG to PNG'));
-            }
-          }, 'image/png');
-        };
-        image.onerror = (error) => {
-          URL.revokeObjectURL(url);
-          reject(error);
-        };
-        image.src = url;
-      });
-    }
-
-    async function downloadIdCard() {
-      if (!currentMember) return;
-      const photoDataUrl = currentMember.passportPhotoUrl ? await fetchImageDataUrl(currentMember.passportPhotoUrl) : '';
-      const svg = createIdCardSVG(currentMember, photoDataUrl);
-      const pngBlob = await svgToPng(svg, 1100, 640);
-      const url = URL.createObjectURL(pngBlob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `${currentMember.memberId || 'RHYC_ID_CARD'}.png`;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      URL.revokeObjectURL(url);
-    }
-
-    onAuthStateChanged(auth, async (user) => {
-      if (!user) {
-        window.location.href = "index.html";
-        return;
-      }
-
-      const memberSnapshot = await getDoc(doc(db, "members", user.uid));
-      if (!memberSnapshot.exists()) {
-        welcomeMessage.textContent = "Member profile not found. Please login again.";
-        setTimeout(() => window.location.href = "index.html", 1800);
-        return;
-      }
-
-      const member = memberSnapshot.data();
-      renderIdCard(member);
-      welcomeMessage.textContent = `Welcome back, ${member.firstName} ${member.lastName}!`;
-      memberDetails.innerHTML = `Your member ID is <strong>${member.memberId}</strong> and your role is <strong>${member.role}</strong>. Thank you for being an active part of the coalition.`;
-    });
-
-    window.handleLogout = async function () {
-      await signOut(auth);
-      window.location.href = "index.html";
-    };
-
-    window.openIdCard = openIdCard;
-    window.closeIdCard = closeIdCard;
-    window.downloadIdCard = downloadIdCard;
-    viewIdCardButton.addEventListener('click', openIdCard);
-  </script>
+  <script type="module" src="./js/dashboard.js"></script>
 </body>
 </html>
