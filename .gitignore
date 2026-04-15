@@ -1,6 +1,7 @@
 /# Local Firebase configuration (keep this file private and do not commit)
 js/firebase-config.js
 js/firebase-config.local.js
+.env
 
 # General excludes
 .DS_Store
