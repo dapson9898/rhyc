@@ -1,61 +1,229 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create account</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RHYC Member Registration</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    body { background: #f7f9fb; padding: 20px; }
+    .register-page { max-width: 940px; margin: 0 auto; }
+    .register-card { background: #fff; border-radius: 18px; box-shadow: var(--shadow); overflow: hidden; }
+    .register-card header { padding: 28px 32px 18px; }
+    .register-card header h1 { font-family: "Montserrat", sans-serif; color: var(--green-dark); font-size: clamp(1.8rem, 2.5vw, 2.4rem); }
+    .register-card header p { margin-top: 10px; color: #4d4d4d; line-height: 1.7; }
+    .register-body { padding: 24px 32px 32px; }
+    .form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+    .form-group { display: flex; flex-direction: column; }
+    .form-group label { font-size: 0.9rem; margin-bottom: 8px; font-weight: 700; color: #333; }
+    .form-group input,
+    .form-group select { padding: 14px 14px; border: 1.5px solid var(--gray-border); border-radius: 10px; font: inherit; color: #222; background: #fff; }
+    .form-group input[readonly] { background: #f0f0f0; }
+    .form-group .note { margin-top: 6px; font-size: 0.84rem; color: #676767; }
+    .full-width { grid-column: 1 / -1; }
+    .btn-submit { margin-top: 18px; width: 100%; padding: 16px 18px; background: linear-gradient(135deg, var(--green-dark), var(--green-mid)); color: #fff; border: none; border-radius: 12px; font-family: "Montserrat", sans-serif; font-size: 1rem; font-weight: 700; letter-spacing: 0.8px; cursor: pointer; transition: transform 0.15s ease, box-shadow 0.15s ease; }
+    .btn-submit:hover { transform: translateY(-1px); box-shadow: 0 12px 24px rgba(26, 107, 58, 0.2); }
+    .message { display: none; margin-top: 18px; padding: 14px 18px; border-radius: 12px; font-weight: 600; line-height: 1.4; }
+    .message.success { display: block; background: #e9f7ef; color: #1b5e2e; border: 1px solid #b6e6c4; }
+    .message.error { display: block; background: #fdecea; color: #8a1a13; border: 1px solid #f5c8c2; }
+    @media (max-width: 770px) { .form-grid { grid-template-columns: 1fr; } }
+  </style>
 </head>
 <body>
-    <form id="signup-form">
-        <input type="email" id="email" placeholder="Enter email">
-        <input type="password" id="password" placeholder="Enter password">
-        <button type="button" id="create-account">Create account</button>
-    </form>
-</body>
-<script type="module">
-  // Import the functions you need from the SDKs you need
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
-  import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-auth.js";
-  // TODO: Add SDKs for Firebase products that you want to use
-  // https://firebase.google.com/docs/web/setup#available-libraries
+  <div class="register-page">
+    <section class="register-card">
+      <header>
+        <h1>RHYC Member Registration</h1>
+        <p>Fill in your member details to register. After successful registration you will be redirected to the login page.</p>
+      </header>
+      <div class="register-body">
+        <form id="signup-form">
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="email">Email</label>
+              <input type="email" id="email" placeholder="member@example.com" required />
+            </div>
+            <div class="form-group">
+              <label for="password">Password</label>
+              <input type="password" id="password" placeholder="At least 6 characters" minlength="6" required />
+            </div>
+            <div class="form-group">
+              <label for="firstName">First Name</label>
+              <input type="text" id="firstName" placeholder="First name" required />
+            </div>
+            <div class="form-group">
+              <label for="lastName">Last Name</label>
+              <input type="text" id="lastName" placeholder="Last name" required />
+            </div>
+            <div class="form-group full-width">
+              <label for="otherNames">Other Names</label>
+              <input type="text" id="otherNames" placeholder="Other names (optional)" />
+            </div>
+            <div class="form-group">
+              <label for="phoneNumber">Phone Number</label>
+              <input type="tel" id="phoneNumber" placeholder="+234 800 000 0000" required />
+            </div>
+            <div class="form-group">
+              <label for="nationality">Nationality</label>
+              <input type="text" id="nationality" value="Nigeria" readonly />
+            </div>
+            <div class="form-group">
+              <label for="stateOfResidence">State of Residence</label>
+              <input type="text" id="stateOfResidence" placeholder="e.g. Lagos" required />
+            </div>
+            <div class="form-group">
+              <label for="stateOfOrigin">State of Origin</label>
+              <input type="text" id="stateOfOrigin" placeholder="e.g. Ogun" required />
+            </div>
+            <div class="form-group">
+              <label for="localGovernment">Local Government</label>
+              <input type="text" id="localGovernment" placeholder="e.g. Ifo" required />
+            </div>
+            <div class="form-group">
+              <label for="ninNationalIDNumber">NIN National ID Number</label>
+              <input type="text" id="ninNationalIDNumber" placeholder="NIN number" required />
+            </div>
+            <div class="form-group">
+              <label for="isApcMemberBoolean">Are you an APC member?</label>
+              <select id="isApcMemberBoolean" required>
+                <option value="">Select option</option>
+                <option value="true">Yes</option>
+                <option value="false">No</option>
+              </select>
+            </div>
+            <div class="form-group full-width">
+              <label for="passportPhotoFileupload">Passport Photo</label>
+              <input type="file" id="passportPhotoFileupload" accept="image/*" />
+              <span class="note">Upload a clear passport photo to store in Firebase Storage.</span>
+            </div>
+          </div>
+          <button type="submit" class="btn-submit">Create Member Account</button>
+          <div id="message" class="message"></div>
+        </form>
+      </div>
+    </section>
+  </div>
 
-  const emailInput = document.getElementById("email");
-  const passwordInput = document.getElementById("password");
-  const createAccountButton = document.getElementById("create-account");
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-auth.js";
+    import { getFirestore, collection, doc, query, orderBy, limit, getDocs, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
+    import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-storage.js";
 
-  // Your web app's Firebase configuration
-  const firebaseConfig = {
-    apiKey: "AIzaSyBPZeN_ThzS2uq0D7qSbCej3MCuADQsxFE",
-    authDomain: "renewed-hope-agenda.firebaseapp.com",
-    projectId: "renewed-hope-agenda",
-    storageBucket: "renewed-hope-agenda.firebasestorage.app",
-    messagingSenderId: "682305217203",
-    appId: "1:682305217203:web:9c55c33d6dbb79d0f986c6"
-  };
+    const firebaseConfig = {
+      apiKey: "AIzaSyBPZeN_ThzS2uq0D7qSbCej3MCuADQsxFE",
+      authDomain: "renewed-hope-agenda.firebaseapp.com",
+      projectId: "renewed-hope-agenda",
+      storageBucket: "renewed-hope-agenda.appspot.com",
+      messagingSenderId: "682305217203",
+      appId: "1:682305217203:web:9c55c33d6dbb79d0f986c6"
+    };
 
-  // Initialize Firebase
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    const storage = getStorage(app);
+    const signupForm = document.getElementById("signup-form");
+    const messageBox = document.getElementById("message");
 
-  function createAccount() {
-    const email = emailInput.value.trim();
-    const password = passwordInput.value;
-
-    if (!email || !password) {
-      alert("Please enter both email and password.");
-      return;
+    function showMessage(text, type = "success") {
+      messageBox.textContent = text;
+      messageBox.className = `message ${type}`;
+      messageBox.style.display = "block";
     }
 
-    createUserWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        const user = userCredential.user;
-        alert(`Account created for ${user.email}`);
-      })
-      .catch((error) => {
-        alert(error.message);
-      });
-  }
+    async function hashPassword(password) {
+      const encoded = new TextEncoder().encode(password);
+      const hashBuffer = await crypto.subtle.digest("SHA-256", encoded);
+      return Array.from(new Uint8Array(hashBuffer))
+        .map((b) => b.toString(16).padStart(2, "0"))
+        .join("");
+    }
 
-  createAccountButton.addEventListener("click", createAccount);
-</script>
+    async function generateMemberId() {
+      const membersRef = collection(db, "members");
+      const latestMemberQuery = query(membersRef, orderBy("memberId", "desc"), limit(1));
+      const snapshot = await getDocs(latestMemberQuery);
+      if (snapshot.empty) {
+        return "RHYC0001";
+      }
+      const lastMemberId = snapshot.docs[0].data().memberId || "RHYC0000";
+      const match = lastMemberId.match(/RHYC0*([0-9]+)/i);
+      const nextNumber = match ? parseInt(match[1], 10) + 1 : 1;
+      return `RHYC${String(nextNumber).padStart(4, "0")}`;
+    }
+
+    async function uploadPassportPhoto(uid, file) {
+      const filename = `${uid}_${Date.now()}_${file.name}`;
+      const photoRef = storageRef(storage, `passport_photos/${filename}`);
+      await uploadBytes(photoRef, file);
+      return await getDownloadURL(photoRef);
+    }
+
+    signupForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      showMessage("Creating account...", "success");
+
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value;
+      const firstName = document.getElementById("firstName").value.trim();
+      const lastName = document.getElementById("lastName").value.trim();
+      const otherNames = document.getElementById("otherNames").value.trim();
+      const phoneNumber = document.getElementById("phoneNumber").value.trim();
+      const nationality = document.getElementById("nationality").value.trim();
+      const stateOfResidence = document.getElementById("stateOfResidence").value.trim();
+      const stateOfOrigin = document.getElementById("stateOfOrigin").value.trim();
+      const localGovernment = document.getElementById("localGovernment").value.trim();
+      const ninNationalIDNumber = document.getElementById("ninNationalIDNumber").value.trim();
+      const isApcMemberBoolean = document.getElementById("isApcMemberBoolean").value === "true";
+      const passportPhotoFileupload = document.getElementById("passportPhotoFileupload").files[0];
+
+      if (!email || !password || !firstName || !lastName || !phoneNumber || !stateOfResidence || !stateOfOrigin || !localGovernment || !ninNationalIDNumber || !document.getElementById("isApcMemberBoolean").value) {
+        showMessage("Please fill in all required fields before continuing.", "error");
+        return;
+      }
+
+      try {
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const uid = userCredential.user.uid;
+        const memberId = await generateMemberId();
+        const passwordHash = await hashPassword(password);
+        let passportPhotoUrl = "";
+
+        if (passportPhotoFileupload) {
+          // passportPhotoUrl = await uploadPassportPhoto(uid, passportPhotoFileupload);
+          passportPhotoUrl = "./rhyc.png";
+        }
+
+        await setDoc(doc(db, "members", uid), {
+          email,
+          firstName,
+          lastName,
+          otherNames,
+          phoneNumber,
+          nationality,
+          stateOfResidence,
+          stateOfOrigin,
+          localGovernment,
+          ninNationalIDNumber,
+          isApcMemberBoolean,
+          passportPhotoUrl,
+          passwordHash,
+          memberId,
+          role: "member",
+          isActive: true,
+          dateJoined: serverTimestamp()
+        });
+
+        showMessage(`Registration successful! Your member ID is ${memberId}. Redirecting to login...`, "success");
+        signupForm.reset();
+        setTimeout(() => {
+          window.location.href = "index.html";
+        }, 2200);
+      } catch (error) {
+        showMessage(error.message, "error");
+      }
+    });
+  </script>
+</body>
 </html>

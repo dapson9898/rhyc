@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RHYC Admin Dashboard</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    body { margin: 0; min-height: 100vh; font-family: "Open Sans", sans-serif; background: #f7f9fb; }
+    .admin-shell { max-width: 1200px; margin: 0 auto; padding: 24px 20px 40px; }
+    .admin-top { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 20px; align-items: center; margin-bottom: 22px; }
+    .admin-top h1 { margin: 0; font-family: "Montserrat", sans-serif; font-size: clamp(2rem, 2.5vw, 2.4rem); color: var(--green-dark); }
+    .admin-top p { margin: 6px 0 0; color: #475569; }
+    .admin-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+    .btn-secondary, .btn-primary, .btn-danger { border: none; border-radius: 12px; font-weight: 700; cursor: pointer; padding: 12px 18px; }
+    .btn-primary { background: linear-gradient(135deg, var(--green-dark), var(--green-mid)); color: #fff; }
+    .btn-secondary { background: #fff; border: 1.5px solid #cbd5e1; color: #1f2937; }
+    .btn-danger { background: linear-gradient(135deg, var(--orange), var(--orange-dark)); color: #fff; }
+    .admin-panel { background: #fff; border-radius: 24px; box-shadow: var(--shadow); padding: 24px; margin-bottom: 24px; }
+    .admin-panel h2 { margin-top: 0; font-family: "Montserrat", sans-serif; font-size: 1.4rem; color: #1f472e; }
+    .admin-panel p { color: #475569; line-height: 1.75; }
+    .table-wrapper { overflow-x: auto; margin-top: 18px; }
+    table { width: 100%; border-collapse: collapse; min-width: 900px; }
+    th, td { padding: 14px 12px; border-bottom: 1px solid #e2e8f0; text-align: left; vertical-align: top; }
+    th { color: #334155; background: #f8fafc; font-weight: 700; }
+    td { color: #334155; }
+    .pill { display: inline-flex; align-items: center; padding: 6px 10px; border-radius: 999px; font-size: 0.85rem; font-weight: 700; }
+    .pill.active { background: #d1fae5; color: #065f46; }
+    .pill.inactive { background: #fee2e2; color: #991b1b; }
+    .pill.admin { background: #dbeafe; color: #1e3a8a; }
+    .pill.member { background: #fef3c7; color: #92400e; }
+    .member-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+    .member-actions button { min-width: 110px; }
+    .modal-backdrop { position: fixed; inset: 0; display: none; background: rgba(10, 20, 40, 0.66); align-items: center; justify-content: center; padding: 20px; z-index: 1000; }
+    .modal-backdrop.open { display: flex; }
+    .modal-card { width: min(660px, 100%); background: #fff; border-radius: 24px; overflow: hidden; box-shadow: 0 24px 90px rgba(15, 23, 42, 0.18); }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 22px 24px; background: linear-gradient(135deg, var(--green-dark), var(--green-mid)); color: #fff; }
+    .modal-body { padding: 24px; display: grid; gap: 16px; }
+    .modal-body label { display: grid; gap: 8px; font-weight: 700; color: #1f2937; }
+    .modal-body input, .modal-body select { width: 100%; padding: 12px 14px; border: 1.5px solid var(--gray-border); border-radius: 12px; font: inherit; }
+    .modal-footer { display: flex; justify-content: flex-end; gap: 12px; padding: 18px 24px 24px; background: #f8fafb; }
+    .form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+    .form-grid-full { grid-column: 1 / -1; }
+    .message { color: #0f5132; margin-top: 6px; }
+    .error { color: #991b1b; }
+    @media (max-width: 860px) { .form-grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <div class="admin-shell">
+    <div class="admin-top">
+      <div>
+        <h1>Admin Dashboard</h1>
+        <p id="admin-email-text">Loading admin profile...</p>
+      </div>
+      <div class="admin-actions">
+        <button class="btn-secondary" id="refresh-members">Refresh members</button>
+        <button class="btn-danger" id="logout-btn">Logout</button>
+      </div>
+    </div>
+
+    <section class="admin-panel">
+      <div style="display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap; align-items:center;">
+        <div>
+          <h2>Registered Members</h2>
+          <p>View and manage all registered member profiles, toggle active access, and change roles.</p>
+        </div>
+      </div>
+      <div style="display:flex; flex-wrap:wrap; gap:16px; align-items:center; margin-top:18px;">
+        <label style="display:flex; flex-direction:column; gap:8px; font-weight:700; color:#334155;">
+          Search members
+          <input id="member-search" type="search" placeholder="Search by name, email, ID, role" style="min-width:260px; padding:10px 12px; border:1.5px solid var(--gray-border); border-radius:12px;" />
+        </label>
+        <label style="display:flex; flex-direction:column; gap:8px; font-weight:700; color:#334155;">
+          Rows per page
+          <select id="page-size" style="min-width:120px; padding:10px 12px; border:1.5px solid var(--gray-border); border-radius:12px;">
+            <option value="5">5</option>
+            <option value="10" selected>10</option>
+            <option value="20">20</option>
+            <option value="50">50</option>
+          </select>
+        </label>
+      </div>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Member ID</th>
+              <th>Role</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="members-table-body">
+            <tr><td colspan="6" style="padding:24px; text-align:center; color:#475569;">Loading members...</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:12px; align-items:center; margin-top:16px;">
+        <span id="pagination-info" style="color:#475569;">Page 1</span>
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          <button class="btn-secondary" id="prev-page">Previous</button>
+          <button class="btn-secondary" id="next-page">Next</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="admin-panel">
+      <h2>Admin Password</h2>
+      <p>Change your admin password securely. You must confirm your current password before updating.</p>
+      <form id="password-form" class="form-grid">
+        <label>
+          Current Password
+          <input type="password" id="current-password" placeholder="Current password" required />
+        </label>
+        <label>
+          New Password
+          <input type="password" id="new-password" placeholder="New password" required minlength="6" />
+        </label>
+        <label class="form-grid-full">
+          Confirm New Password
+          <input type="password" id="confirm-password" placeholder="Confirm new password" required />
+        </label>
+        <div class="form-grid-full" style="display:flex; justify-content:flex-end; gap:12px; align-items:center;">
+          <button type="submit" class="btn-primary">Update Password</button>
+          <span id="password-message" class="message"></span>
+        </div>
+      </form>
+    </section>
+  </div>
+
+  <div class="modal-backdrop" id="edit-modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div>
+          <h3>Edit Member</h3>
+          <p id="edit-member-email" style="margin:4px 0 0; font-size:0.95rem; opacity:0.85;">Select a member to edit.</p>
+        </div>
+        <button class="btn-secondary" id="close-modal">Close</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-grid">
+          <label>
+            Email
+            <input type="email" id="edit-email" />
+          </label>
+          <label>
+            Member ID
+            <input type="text" id="edit-memberId" />
+          </label>
+          <label>
+            First Name
+            <input type="text" id="edit-firstName" />
+          </label>
+          <label>
+            Last Name
+            <input type="text" id="edit-lastName" />
+          </label>
+          <label>
+            Other Names
+            <input type="text" id="edit-otherNames" />
+          </label>
+          <label>
+            Phone Number
+            <input type="text" id="edit-phoneNumber" />
+          </label>
+          <label>
+            Nationality
+            <input type="text" id="edit-nationality" />
+          </label>
+          <label>
+            State of Residence
+            <input type="text" id="edit-stateOfResidence" />
+          </label>
+          <label>
+            State of Origin
+            <input type="text" id="edit-stateOfOrigin" />
+          </label>
+          <label>
+            Local Government
+            <input type="text" id="edit-localGovernment" />
+          </label>
+          <label>
+            NIN Number
+            <input type="text" id="edit-ninNationalIDNumber" />
+          </label>
+          <label>
+            APC Member
+            <select id="edit-isApcMemberBoolean">
+              <option value="true">Yes</option>
+              <option value="false">No</option>
+            </select>
+          </label>
+          <label>
+            Role
+            <select id="edit-role">
+              <option value="member">member</option>
+              <option value="admin">admin</option>
+            </select>
+          </label>
+          <label>
+            Active
+            <select id="edit-isActive">
+              <option value="true">Enabled</option>
+              <option value="false">Disabled</option>
+            </select>
+          </label>
+          <label>
+            Passport Photo URL
+            <input type="text" id="edit-passportPhotoUrl" />
+          </label>
+          <label class="form-grid-full">
+            Date Joined
+            <input type="text" id="edit-dateJoined" disabled />
+          </label>
+        </div>
+        <div class="form-grid-full" style="display:flex; justify-content:flex-end; gap:12px; align-items:center;">
+          <button class="btn-primary" id="save-member">Save changes</button>
+          <span id="edit-message" class="message"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="view-modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div>
+          <h3>Member Profile</h3>
+          <p id="view-member-email" style="margin:4px 0 0; font-size:0.95rem; opacity:0.85;">Member details from the database.</p>
+        </div>
+        <button class="btn-secondary" id="close-view-modal">Close</button>
+      </div>
+      <div class="modal-body" id="view-body">
+        <div style="display:grid; gap:18px;">
+          <div style="display:flex; gap:18px; flex-wrap:wrap; align-items:start;">
+            <div style="flex:1 1 220px; min-width:220px;">
+              <div style="border-radius:20px; overflow:hidden; background:#f4faf5; border:1px solid #d1fae5; min-height:260px; display:flex; align-items:center; justify-content:center; padding:12px;">
+                <img id="view-passport-photo" src="" alt="Passport photo" style="width:100%; height:auto; object-fit:cover; max-height:260px; display:block;" />
+              </div>
+            </div>
+            <div style="flex:2 1 360px; display:grid; gap:10px;">
+              <div><strong>Name:</strong> <span id="view-name"></span></div>
+              <div><strong>Email:</strong> <span id="view-email"></span></div>
+              <div><strong>Member ID:</strong> <span id="view-memberId"></span></div>
+              <div><strong>Role:</strong> <span id="view-role"></span></div>
+              <div><strong>Status:</strong> <span id="view-status"></span></div>
+            </div>
+          </div>
+          <div style="display:grid; gap:12px;">
+            <div><strong>Phone:</strong> <span id="view-phone"></span></div>
+            <div><strong>Nationality:</strong> <span id="view-nationality"></span></div>
+            <div><strong>State of Residence:</strong> <span id="view-stateOfResidence"></span></div>
+            <div><strong>State of Origin:</strong> <span id="view-stateOfOrigin"></span></div>
+            <div><strong>Local Government:</strong> <span id="view-localGovernment"></span></div>
+            <div><strong>NIN Number:</strong> <span id="view-ninNationalIDNumber"></span></div>
+            <div><strong>APC Member:</strong> <span id="view-isApcMemberBoolean"></span></div>
+            <div><strong>Date Joined:</strong> <span id="view-dateJoined"></span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut, EmailAuthProvider, reauthenticateWithCredential, updatePassword } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-auth.js";
+    import { getFirestore, collection, doc, getDoc, getDocs, updateDoc } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBPZeN_ThzS2uq0D7qSbCej3MCuADQsxFE",
+      authDomain: "renewed-hope-agenda.firebaseapp.com",
+      projectId: "renewed-hope-agenda",
+      storageBucket: "renewed-hope-agenda.appspot.com",
+      messagingSenderId: "682305217203",
+      appId: "1:682305217203:web:9c55c33d6dbb79d0f986c6"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    const adminEmailText = document.getElementById("admin-email-text");
+    const membersTableBody = document.getElementById("members-table-body");
+    const refreshButton = document.getElementById("refresh-members");
+    const logoutButton = document.getElementById("logout-btn");
+    const editModal = document.getElementById("edit-modal");
+    const closeModalButton = document.getElementById("close-modal");
+    const editMessage = document.getElementById("edit-message");
+    const passwordMessage = document.getElementById("password-message");
+    const passwordForm = document.getElementById("password-form");
+    const searchInput = document.getElementById("member-search");
+    const pageSizeSelect = document.getElementById("page-size");
+    const paginationInfo = document.getElementById("pagination-info");
+    const prevPageButton = document.getElementById("prev-page");
+    const nextPageButton = document.getElementById("next-page");
+
+    const editFields = {
+      email: document.getElementById("edit-email"),
+      memberId: document.getElementById("edit-memberId"),
+      firstName: document.getElementById("edit-firstName"),
+      lastName: document.getElementById("edit-lastName"),
+      otherNames: document.getElementById("edit-otherNames"),
+      phoneNumber: document.getElementById("edit-phoneNumber"),
+      nationality: document.getElementById("edit-nationality"),
+      stateOfResidence: document.getElementById("edit-stateOfResidence"),
+      stateOfOrigin: document.getElementById("edit-stateOfOrigin"),
+      localGovernment: document.getElementById("edit-localGovernment"),
+      ninNationalIDNumber: document.getElementById("edit-ninNationalIDNumber"),
+      isApcMemberBoolean: document.getElementById("edit-isApcMemberBoolean"),
+      role: document.getElementById("edit-role"),
+      isActive: document.getElementById("edit-isActive"),
+      passportPhotoUrl: document.getElementById("edit-passportPhotoUrl"),
+      dateJoined: document.getElementById("edit-dateJoined")
+    };
+
+    let memberRecords = {};
+    let filteredMemberIds = [];
+    let currentEditUid = null;
+    let currentPage = 1;
+    let pageSize = Number(pageSizeSelect.value) || 10;
+
+    function showPasswordMessage(text, isError = false) {
+      passwordMessage.textContent = text;
+      passwordMessage.className = isError ? 'error' : 'message';
+    }
+
+    function showEditMessage(text, isError = false) {
+      editMessage.textContent = text;
+      editMessage.className = isError ? 'error' : 'message';
+    }
+
+    async function loadMembers() {
+      membersTableBody.innerHTML = '<tr><td colspan="6" style="padding:24px; text-align:center; color:#475569;">Loading members...</td></tr>';
+      const snapshot = await getDocs(collection(db, "members"));
+      memberRecords = {};
+      snapshot.forEach(doc => {
+        memberRecords[doc.id] = doc.data();
+      });
+      renderMembers();
+    }
+
+    function applyFilters() {
+      const searchText = searchInput.value.trim().toLowerCase();
+      const entries = Object.entries(memberRecords);
+      filteredMemberIds = entries
+        .filter(([uid, member]) => {
+          if (!searchText) return true;
+          const values = [
+            member.firstName,
+            member.lastName,
+            member.otherNames,
+            member.email,
+            member.memberId,
+            member.role,
+            member.stateOfResidence,
+            member.stateOfOrigin,
+            member.localGovernment,
+            member.ninNationalIDNumber
+          ].filter(Boolean).join(' ').toLowerCase();
+          return values.includes(searchText);
+        })
+        .map(([uid]) => uid);
+      currentPage = 1;
+    }
+
+    function renderMembers() {
+      if (!filteredMemberIds.length) {
+        applyFilters();
+      }
+      pageSize = Number(pageSizeSelect.value) || 10;
+      const total = filteredMemberIds.length;
+      const pageCount = Math.max(1, Math.ceil(total / pageSize));
+      if (currentPage > pageCount) currentPage = pageCount;
+      const start = (currentPage - 1) * pageSize;
+      const currentIds = filteredMemberIds.slice(start, start + pageSize);
+
+      if (!currentIds.length) {
+        membersTableBody.innerHTML = '<tr><td colspan="6" style="padding:24px; text-align:center; color:#475569;">No registered members found.</td></tr>';
+      } else {
+        membersTableBody.innerHTML = currentIds.map((uid) => {
+          const member = memberRecords[uid];
+          const fullName = `${member.firstName || ''} ${member.lastName || ''}`.trim() || 'Unnamed Member';
+          const roleClass = member.role === 'admin' ? 'admin' : 'member';
+          return `
+            <tr>
+              <td>${fullName}</td>
+              <td>${member.email || ''}</td>
+              <td>${member.memberId || ''}</td>
+              <td><span class="pill ${roleClass}">${member.role || 'member'}</span></td>
+              <td><span class="pill ${member.isActive ? 'active' : 'inactive'}">${member.isActive ? 'Enabled' : 'Disabled'}</span></td>
+              <td>
+                <div class="member-actions">
+                  <button class="btn-secondary view-btn" data-uid="${uid}">View</button>
+                  <button class="btn-secondary edit-btn" data-uid="${uid}">Edit</button>
+                  <button class="btn-primary toggle-btn" data-uid="${uid}" data-active="${member.isActive}">${member.isActive ? 'Disable' : 'Enable'}</button>
+                </div>
+              </td>
+            </tr>
+          `;
+        }).join('');
+      }
+
+      paginationInfo.textContent = `Page ${currentPage} of ${pageCount} | ${total} member${total === 1 ? '' : 's'}`;
+      prevPageButton.disabled = currentPage <= 1;
+      nextPageButton.disabled = currentPage >= pageCount;
+    }
+
+    function formatDateJoined(value) {
+      if (!value) return '';
+      if (value.toDate) {
+        return value.toDate().toLocaleString();
+      }
+      return new Date(value).toLocaleString();
+    }
+
+    function openEditModal(uid) {
+      const member = memberRecords[uid];
+      if (!member) return;
+      currentEditUid = uid;
+      document.getElementById("edit-member-email").textContent = member.email || 'Member email not available';
+      editFields.email.value = member.email || '';
+      editFields.memberId.value = member.memberId || '';
+      editFields.firstName.value = member.firstName || '';
+      editFields.lastName.value = member.lastName || '';
+      editFields.otherNames.value = member.otherNames || '';
+      editFields.phoneNumber.value = member.phoneNumber || '';
+      editFields.nationality.value = member.nationality || '';
+      editFields.stateOfResidence.value = member.stateOfResidence || '';
+      editFields.stateOfOrigin.value = member.stateOfOrigin || '';
+      editFields.localGovernment.value = member.localGovernment || '';
+      editFields.ninNationalIDNumber.value = member.ninNationalIDNumber || '';
+      editFields.isApcMemberBoolean.value = String(member.isApcMemberBoolean || false);
+      editFields.role.value = member.role || 'member';
+      editFields.isActive.value = String(member.isActive ?? true);
+      editFields.passportPhotoUrl.value = member.passportPhotoUrl || '';
+      editFields.dateJoined.value = formatDateJoined(member.dateJoined);
+      showEditMessage('');
+      editModal.classList.add('open');
+    }
+
+    async function saveMemberChanges(event) {
+      event.preventDefault();
+      if (!currentEditUid) return;
+      showEditMessage('Saving changes...', false);
+
+      const updates = {
+        email: editFields.email.value.trim(),
+        memberId: editFields.memberId.value.trim(),
+        firstName: editFields.firstName.value.trim(),
+        lastName: editFields.lastName.value.trim(),
+        otherNames: editFields.otherNames.value.trim(),
+        phoneNumber: editFields.phoneNumber.value.trim(),
+        nationality: editFields.nationality.value.trim(),
+        stateOfResidence: editFields.stateOfResidence.value.trim(),
+        stateOfOrigin: editFields.stateOfOrigin.value.trim(),
+        localGovernment: editFields.localGovernment.value.trim(),
+        ninNationalIDNumber: editFields.ninNationalIDNumber.value.trim(),
+        isApcMemberBoolean: editFields.isApcMemberBoolean.value === 'true',
+        role: editFields.role.value,
+        isActive: editFields.isActive.value === 'true',
+        passportPhotoUrl: editFields.passportPhotoUrl.value.trim()
+      };
+
+      try {
+        await updateDoc(doc(db, "members", currentEditUid), updates);
+        memberRecords[currentEditUid] = { ...memberRecords[currentEditUid], ...updates };
+        applyFilters();
+        renderMembers();
+        showEditMessage('Member profile updated successfully.', false);
+      } catch (error) {
+        showEditMessage(error.message || 'Unable to update member.', true);
+      }
+    }
+
+    async function toggleActive(uid, currentState) {
+      try {
+        await updateDoc(doc(db, "members", uid), { isActive: !currentState });
+        memberRecords[uid].isActive = !currentState;
+        renderMembers();
+      } catch (error) {
+        alert(error.message || 'Unable to change status.');
+      }
+    }
+
+    function attachTableEvents() {
+      membersTableBody.addEventListener('click', (event) => {
+        const viewButton = event.target.closest('.view-btn');
+        const editButton = event.target.closest('.edit-btn');
+        const toggleButton = event.target.closest('.toggle-btn');
+        if (viewButton) {
+          openViewModal(viewButton.dataset.uid);
+        }
+        if (editButton) {
+          openEditModal(editButton.dataset.uid);
+        }
+        if (toggleButton) {
+          toggleActive(toggleButton.dataset.uid, toggleButton.dataset.active === 'true');
+        }
+      });
+    }
+
+    function openViewModal(uid) {
+      const member = memberRecords[uid];
+      if (!member) return;
+      document.getElementById('view-member-email').textContent = member.email || 'Member details from the database.';
+      document.getElementById('view-passport-photo').src = member.passportPhotoUrl || 'https://via.placeholder.com/320x320?text=No+Photo';
+      document.getElementById('view-name').textContent = `${member.firstName || ''} ${member.lastName || ''}`.trim() || 'Unnamed Member';
+      document.getElementById('view-email').textContent = member.email || '';
+      document.getElementById('view-memberId').textContent = member.memberId || '';
+      document.getElementById('view-role').textContent = member.role || 'member';
+      document.getElementById('view-status').textContent = member.isActive ? 'Enabled' : 'Disabled';
+      document.getElementById('view-phone').textContent = member.phoneNumber || '';
+      document.getElementById('view-nationality').textContent = member.nationality || '';
+      document.getElementById('view-stateOfResidence').textContent = member.stateOfResidence || '';
+      document.getElementById('view-stateOfOrigin').textContent = member.stateOfOrigin || '';
+      document.getElementById('view-localGovernment').textContent = member.localGovernment || '';
+      document.getElementById('view-ninNationalIDNumber').textContent = member.ninNationalIDNumber || '';
+      document.getElementById('view-isApcMemberBoolean').textContent = member.isApcMemberBoolean ? 'Yes' : 'No';
+      document.getElementById('view-dateJoined').textContent = formatDateJoined(member.dateJoined);
+      document.getElementById('view-modal').classList.add('open');
+    }
+
+    document.getElementById('close-view-modal').addEventListener('click', () => {
+      document.getElementById('view-modal').classList.remove('open');
+    });
+
+    searchInput.addEventListener('input', () => {
+      applyFilters();
+      renderMembers();
+    });
+
+    pageSizeSelect.addEventListener('change', () => {
+      currentPage = 1;
+      renderMembers();
+    });
+
+    prevPageButton.addEventListener('click', () => {
+      if (currentPage > 1) {
+        currentPage -= 1;
+        renderMembers();
+      }
+    });
+
+    nextPageButton.addEventListener('click', () => {
+      const total = filteredMemberIds.length;
+      const pageCount = Math.max(1, Math.ceil(total / pageSize));
+      if (currentPage < pageCount) {
+        currentPage += 1;
+        renderMembers();
+      }
+    });
+
+    passwordForm.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      showPasswordMessage('Updating password...', false);
+      const currentPassword = document.getElementById('current-password').value;
+      const newPassword = document.getElementById('new-password').value;
+      const confirmPassword = document.getElementById('confirm-password').value;
+
+      if (newPassword !== confirmPassword) {
+        showPasswordMessage('New passwords do not match.', true);
+        return;
+      }
+
+      const user = auth.currentUser;
+      if (!user) {
+        showPasswordMessage('No authenticated admin found.', true);
+        return;
+      }
+
+      try {
+        const credential = EmailAuthProvider.credential(user.email, currentPassword);
+        await reauthenticateWithCredential(user, credential);
+        await updatePassword(user, newPassword);
+        showPasswordMessage('Password updated successfully.', false);
+        passwordForm.reset();
+      } catch (error) {
+        showPasswordMessage(error.message || 'Unable to update password.', true);
+      }
+    });
+
+    refreshButton.addEventListener('click', loadMembers);
+    logoutButton.addEventListener('click', async () => {
+      await signOut(auth);
+      window.location.href = 'admin-login.html';
+    });
+    closeModalButton.addEventListener('click', () => editModal.classList.remove('open'));
+    document.getElementById('save-member').addEventListener('click', saveMemberChanges);
+
+    attachTableEvents();
+
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        window.location.href = 'admin-login.html';
+        return;
+      }
+
+      const snapshot = await getDoc(doc(db, 'members', user.uid));
+      if (!snapshot.exists() || snapshot.data().role !== 'admin') {
+        await signOut(auth);
+        window.location.href = 'admin-login.html';
+        return;
+      }
+
+      adminEmailText.textContent = `Logged in as ${user.email}`;
+      await loadMembers();
+    });
+  </script>
+</body>
+</html>

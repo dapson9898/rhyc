@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RHYC Admin Login</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    body { min-height: 100vh; margin: 0; font-family: "Open Sans", sans-serif; display: grid; place-items: center; background: #f7f9fb; }
+    .admin-login-shell { width: min(520px, 92vw); padding: 24px; background: #fff; border-radius: 24px; box-shadow: var(--shadow); }
+    .admin-login-shell h1 { margin-bottom: 12px; font-family: "Montserrat", sans-serif; color: var(--green-dark); font-size: 2rem; }
+    .admin-login-shell p { margin-bottom: 24px; color: #4b5563; line-height: 1.8; }
+    .admin-form { display: grid; gap: 16px; }
+    .admin-form label { display: grid; gap: 8px; font-weight: 700; color: #22343c; }
+    .admin-form input { width: 100%; padding: 14px 16px; border: 1.5px solid var(--gray-border); border-radius: 12px; font: inherit; color: #172b4d; background: #fff; }
+    .admin-form button { padding: 14px 18px; border: none; border-radius: 12px; background: linear-gradient(135deg, var(--green-dark), var(--green-mid)); color: #fff; font-family: "Montserrat", sans-serif; font-weight: 700; cursor: pointer; }
+    .admin-form button:hover { filter: brightness(1.05); }
+    .admin-actions { display: flex; justify-content: space-between; margin-top: 10px; gap: 12px; flex-wrap: wrap; }
+    .admin-actions a { color: var(--green-mid); text-decoration: none; font-weight: 700; }
+    .message { min-height: 24px; color: #c0392b; }
+  </style>
+</head>
+<body>
+  <div class="admin-login-shell">
+    <h1>Admin Login</h1>
+    <p>Use your admin credentials to access the RHYC admin dashboard and manage members.</p>
+    <form id="admin-login-form" class="admin-form">
+      <label>Email
+        <input id="admin-email" type="email" placeholder="admin@example.com" required />
+      </label>
+      <label>Password
+        <input id="admin-password" type="password" placeholder="Password" required />
+      </label>
+      <button type="submit">Login</button>
+      <div class="message" id="admin-message"></div>
+    </form>
+    <div class="admin-actions">
+      <a href="index.html">Back to member login</a>
+      <!-- <span>Admins must have role <strong>admin</strong> in their member profile.</span> -->
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBPZeN_ThzS2uq0D7qSbCej3MCuADQsxFE",
+      authDomain: "renewed-hope-agenda.firebaseapp.com",
+      projectId: "renewed-hope-agenda",
+      storageBucket: "renewed-hope-agenda.appspot.com",
+      messagingSenderId: "682305217203",
+      appId: "1:682305217203:web:9c55c33d6dbb79d0f986c6"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    const loginForm = document.getElementById("admin-login-form");
+    const messageBox = document.getElementById("admin-message");
+
+    function showMessage(text, isError = true) {
+      messageBox.textContent = text;
+      messageBox.style.color = isError ? "#c0392b" : "#1f7a3a";
+    }
+
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) return;
+      const snapshot = await getDoc(doc(db, "members", user.uid));
+      if (snapshot.exists() && snapshot.data().role === "admin") {
+        window.location.href = "admin-dashboard.html";
+      } else {
+        await signOut(auth);
+      }
+    });
+
+    loginForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      showMessage("Signing in...", false);
+
+      const email = document.getElementById("admin-email").value.trim();
+      const password = document.getElementById("admin-password").value;
+
+      try {
+        const credential = await signInWithEmailAndPassword(auth, email, password);
+        const snapshot = await getDoc(doc(db, "members", credential.user.uid));
+        if (!snapshot.exists() || snapshot.data().role !== "admin") {
+          await signOut(auth);
+          showMessage("Access denied. Admin role required.");
+          return;
+        }
+        window.location.href = "admin-dashboard.html";
+      } catch (error) {
+        showMessage(error.message || "Unable to login. Please try again.");
+      }
+    });
+  </script>
+</body>
+</html>
