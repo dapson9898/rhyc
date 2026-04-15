@@ -1,9 +1,24 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-auth.js";
-// import { firebaseConfig } from "./firebase-config.example.js";
-// import { firebaseConfig } from "./firebase-config.js";
-const response = await fetch('/api/config');
-const firebaseConfig = await response.json();
+// import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
+// import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-auth.js";
+// // import { firebaseConfig } from "./firebase-config.example.js";
+// // import { firebaseConfig } from "./firebase-config.js";
+// const response = await fetch('/api/config');
+// const firebaseConfig = await response.json();
+
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
+
+let firebaseConfig;
+try {
+  const response = await fetch('/api/config');
+  if (!response.ok) throw new Error(`Config fetch failed: ${response.status}`);
+  firebaseConfig = await response.json();
+} catch (error) {
+  console.error('Failed to load Firebase config:', error);
+  alert('Failed to initialize app. Please try again later.');
+  throw error;
+}
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
