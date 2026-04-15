@@ -1,7 +1,0 @@
-{
-  "name": "renewed-hope-agenda",
-  "private": true,
-  "scripts": {
-    "build": "node scripts/generate-firebase-config.js"
-  }
-}
