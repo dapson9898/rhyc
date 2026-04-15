@@ -2,7 +2,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/fireba
 import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-auth.js";
 // import { firebaseConfig } from "./firebase-config.example.js";
 // import { firebaseConfig } from "./firebase-config.js";
-const response = await fetch('./firebase-config.example.js');
+const response = await fetch('/api/config');
 const firebaseConfig = await response.json();
 
 const app = initializeApp(firebaseConfig);

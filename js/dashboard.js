@@ -3,7 +3,7 @@ import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/fi
 import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
 // import { firebaseConfig } from "./firebase-config.example.js";
 // import { firebaseConfig } from "./firebase-config.js";
-const response = await fetch('./firebase-config.example.js');
+const response = await fetch('/api/config');
 const firebaseConfig = await response.json();
 
 const app = initializeApp(firebaseConfig);
