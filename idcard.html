@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+    .idcard-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(10, 20, 40, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    z-index: 1000;
+}
+.idcard-modal.open {
+    display: flex;
+}
+.idcard-panel {
+    width: min(60%, 1040px);
+    background: #fff;
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: 0 24px 80px rgba(0, 0, 0, 0.25);
+}
+.idcard-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 22px 26px;
+    background: linear-gradient(135deg, var(--green-dark), var(--green-mid));
+    color: #fff;
+}
+.idcard-header h3 {
+    margin: 0;
+    font-family: "Montserrat", sans-serif;
+    font-size: 1.2rem;
+}
+.idcard-body {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    padding: 24px;
+}
+.idcard-face {
+    border-radius: 20px;
+    padding: 22px;
+    /* min-height: 20px; */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.06);
+    aspect-ratio: 2.125 / 3.375;
+}
+.idcard-front {
+    background: linear-gradient(180deg, #f4faf5 0%, #ffffff 100%);
+    border: 2px solid red;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+}
+.idcard-back {
+    background: linear-gradient(180deg, #fff9f4 0%, #fff 100%);
+}
+.idcard-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.idcard-info{
+    display: flex;
+    border: 1px solid red;
+    align-items: center;
+    justify-content: center;
+}
+.idcard-logo svg {
+    width: 34px;
+    height: 34px;
+}
+.idcard-title {
+    font-family: "Montserrat", sans-serif;
+    font-size: 1rem;
+    font-weight: 800;
+    color: #1a6b3a;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+.idcard-photo {
+    /* border: 1px solid red; */
+    width: 50%;
+    aspect-ratio: 3 / 4;
+    border-radius: 18px;
+    overflow: hidden;
+    background: #e7edf3;
+    display: grid;
+    place-items: center;
+    border: 2px solid #d5e8d8;
+}
+.idcard-photo-placeholder {
+    color: #64748b;
+    font-weight: 700;
+}
+.idcard-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.idcard-info {
+    display: grid;
+    gap: 10px;
+    margin-top: 18px;
+}
+.idcard-info h4 {
+    margin: 0;
+    font-family: "Montserrat", sans-serif;
+    font-size: 1.15rem;
+    color: #162b1e;
+}
+.idcard-info p {
+    margin: 0;
+    color: #3b3b3b;
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+.idcard-note {
+    padding: 18px 18px;
+    border-radius: 16px;
+    background: rgba(220, 238, 209, 0.45);
+    color: #2a3b26;
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+.idcard-signature {
+    display: grid;
+    gap: 6px;
+    margin-top: 18px;
+}
+.idcard-signature span {
+    display: block;
+    color: #2f3b2f;
+    font-weight: 700;
+}
+.idcard-signature-title {
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: #475569;
+}
+    </style>
+</head>
+<body>
+    <div class="idcard-modal" id="idcard-modal">
+    <div class="idcard-panel">
+      <div class="idcard-header">
+        <h3>RHYC Membership ID Card</h3>
+        <button class="btn-close" id="close-id-card-button">Close</button>
+      </div>
+      <div class="idcard-body">
+        <div class="idcard-face idcard-front">
+          <div>
+            <div class="idcard-logo">
+              <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                <path d="M24 4 C14 4 6 10 6 18 Q6 10 14 8 Z" fill="#c0392b"/>
+                <path d="M14 20 Q8 14 10 8 Q18 10 20 20 Z" fill="#27ae60"/>
+                <path d="M34 20 Q40 14 38 8 Q30 10 28 20 Z" fill="#27ae60"/>
+                <path d="M24 6 C20 6 17 9 17 13 C17 17 20 20 24 23 C28 20 31 17 31 13 C31 9 28 6 24 6Z" fill="#c0392b" opacity="0.85"/>
+              </svg>
+              <div class="idcard-title">Renewed Hope Youth Coalition</div>
+            </div>
+            <div class="idcard-info">
+              <h4 id="idcard-name">Member Name</h4>
+              <p id="idcard-role">Role: member</p>
+              <p id="idcard-member-id">ID: RHYC0000</p>
+            </div>
+          </div>
+          <div class="idcard-photo" id="idcard-photo">
+            <span class="idcard-photo-placeholder">Photo</span>
+          </div>
+        </div>
+        
+        <div class="idcard-face idcard-back">
+          <div class="idcard-note">
+            This membership ID card is a property of the renewed hope youth coalition. Please protect this card and return it to RHYC if found.
+          </div>
+          <div class="idcard-signature">
+            <span>Bright Kenneth</span>
+            <span class="idcard-signature-title">National coordinator</span>
+          </div>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-download" id="download-id-card-button">Download ID Card</button>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

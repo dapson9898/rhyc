@@ -64,10 +64,12 @@ signupForm.addEventListener("submit", async (event) => {
   const stateOfOrigin = document.getElementById("stateOfOrigin").value.trim();
   const localGovernment = document.getElementById("localGovernment").value.trim();
   const ninNationalIDNumber = document.getElementById("ninNationalIDNumber").value.trim();
+  const vinVoterIDNumber = document.getElementById("vinvoterIDNumber").value.trim();
   const isApcMemberBoolean = document.getElementById("isApcMemberBoolean").value === "true";
+  const gender = document.getElementById("gender").value;
   const passportPhotoFileupload = document.getElementById("passportPhotoFileupload").files[0];
 
-  if (!email || !password || !firstName || !lastName || !phoneNumber || !stateOfResidence || !stateOfOrigin || !localGovernment || !ninNationalIDNumber || !document.getElementById("isApcMemberBoolean").value) {
+  if (!email || !password || !firstName || !lastName || !phoneNumber || !stateOfResidence || !stateOfOrigin || !localGovernment || !ninNationalIDNumber || !vinVoterIDNumber || !gender || !document.getElementById("isApcMemberBoolean").value) {
     showMessage("Please fill in all required fields before continuing.", "error");
     return;
   }
@@ -85,6 +87,7 @@ signupForm.addEventListener("submit", async (event) => {
 
     await setDoc(doc(db, "members", uid), {
       email,
+      gender,
       firstName,
       lastName,
       otherNames,
@@ -94,6 +97,7 @@ signupForm.addEventListener("submit", async (event) => {
       stateOfOrigin,
       localGovernment,
       ninNationalIDNumber,
+      vinVoterIDNumber,
       isApcMemberBoolean,
       passportPhotoUrl,
       passwordHash,
@@ -110,6 +114,6 @@ signupForm.addEventListener("submit", async (event) => {
       window.location.href = "index.html";
     }, 2200);
   } catch (error) {
-    showMessage(error.message || "Unable to create account.", "error");
+    showMessage("Error: Unable to create account.", "error");
   }
 });

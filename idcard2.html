@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RHYC ID Card</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=EB+Garamond:ital@1&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background: #e8ece8;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    /* ── Modal ───────────────────────────────────────── */
+    .idcard-modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(10, 20, 40, 0.7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      z-index: 1000;
+    }
+
+    .idcard-panel {
+      width: min(92vw, 860px);
+      background: #fff;
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow: 0 24px 80px rgba(0,0,0,0.25);
+    }
+
+    .idcard-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 18px 26px;
+      background: linear-gradient(135deg, #1a5c35, #27ae60);
+      color: #fff;
+    }
+
+    .idcard-header h3 {
+      margin: 0;
+      font-family: 'Montserrat', sans-serif;
+      font-size: clamp(0.85rem, 2vw, 1.1rem);
+      font-weight: 700;
+    }
+
+    .btn-close {
+      background: rgba(255,255,255,0.2);
+      border: none;
+      color: #fff;
+      padding: 6px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    /* ── Card body: two faces side by side ──────────── */
+    .idcard-body {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(12px, 3vw, 24px);
+      padding: clamp(14px, 3vw, 24px);
+    }
+
+    /* Each face: portrait credit-card aspect ratio */
+    .idcard-face {
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.12);
+      aspect-ratio: 54 / 85.6;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      background: #fff;
+      container-type: inline-size;  /* enables cqi units inside */
+    }
+
+    /* ═══════════════════════════
+       FRONT FACE
+    ═══════════════════════════ */
+    .idcard-front {
+      padding: 6% 8% 7%;
+      justify-content: flex-start;
+    }
+
+    /* Eagle / shield logo */
+    .idcard-logo {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      margin-bottom: 3%;
+    }
+
+    .idcard-logo svg {
+      width: 72%;
+    }
+
+    /* Org name */
+    .idcard-title {
+      font-family: 'Montserrat', sans-serif;
+      font-size: clamp(0.38rem, 1.35cqi, 0.72rem);
+      font-weight: 800;
+      color: #0d3d20;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      text-align: center;
+      width: 100%;
+      margin-bottom: 5%;
+    }
+
+    /* Photo box */
+    .idcard-photo {
+      width: 62%;
+      aspect-ratio: 3 / 4;
+      border-radius: 10px;
+      border: 2px dashed #aab8aa;
+      background: #f0f3f0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8%;
+      margin-bottom: 5%;
+      overflow: hidden;
+    }
+
+    .idcard-photo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .idcard-photo-icon {
+      width: 34%;
+      opacity: 0.38;
+    }
+
+    .idcard-photo-placeholder {
+      font-size: clamp(0.3rem, 1cqi, 0.55rem);
+      font-weight: 700;
+      color: #8a9a8a;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    /* Name + role */
+    .idcard-info {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .idcard-info h4 {
+      font-family: 'Montserrat', sans-serif;
+      font-size: clamp(0.45rem, 1.45cqi, 0.8rem);
+      font-weight: 700;
+      color: #111;
+      text-align: center;
+      margin-bottom: 4%;
+    }
+
+    .idcard-info-divider {
+      width: 55%;
+      height: 1px;
+      background: #bbb;
+      margin-bottom: 4%;
+    }
+
+    .idcard-info p {
+      font-size: clamp(0.38rem, 1.1cqi, 0.62rem);
+      font-weight: 500;
+      color: #555;
+      text-align: center;
+    }
+
+    /* ═══════════════════════════
+       BACK FACE
+    ═══════════════════════════ */
+    .idcard-back {
+      padding: 9% 10%;
+      justify-content: space-between;
+    }
+
+    .idcard-note {
+      font-size: clamp(0.38rem, 1.2cqi, 0.66rem);
+      font-weight: 500;
+      color: #222;
+      line-height: 1.75;
+      text-align: center;
+    }
+
+    .idcard-note strong {
+      font-weight: 700;
+    }
+
+    /* Signature block */
+    .idcard-signature {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      width: 100%;
+      gap: 0;
+    }
+
+    .idcard-signature-script {
+      font-family: 'EB Garamond', serif;
+      font-style: italic;
+      font-size: clamp(0.75rem, 2.6cqi, 1.4rem);
+      color: #111;
+      line-height: 1.2;
+      margin-bottom: 2%;
+    }
+
+    .idcard-sig-line {
+      width: 85%;
+      height: 1px;
+      background: #333;
+      margin-bottom: 4%;
+    }
+
+    .idcard-signature span {
+      display: block;
+      font-size: clamp(0.42rem, 1.3cqi, 0.7rem);
+      font-weight: 700;
+      color: #111;
+      margin-bottom: 1%;
+    }
+
+    .idcard-signature-title {
+      font-size: clamp(0.36rem, 1.05cqi, 0.58rem) !important;
+      font-weight: 400 !important;
+      color: #555 !important;
+    }
+
+    /* ── Footer actions ──────────────────────────────── */
+    .modal-actions {
+      padding: 12px 24px 18px;
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .btn-download {
+      background: linear-gradient(135deg, #1a5c35, #27ae60);
+      color: #fff;
+      border: none;
+      padding: 10px 22px;
+      border-radius: 10px;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<div class="idcard-modal" id="idcard-modal">
+  <div class="idcard-panel">
+
+    <div class="idcard-header">
+      <h3>RHYC Membership ID Card</h3>
+      <button class="btn-close" id="close-id-card-button">Close</button>
+    </div>
+
+    <div class="idcard-body">
+
+      <!-- ══════════════ FRONT ══════════════ -->
+      <div class="idcard-face idcard-front">
+
+        <!-- Eagle + shield logo (inline SVG) -->
+        <div class="idcard-logo">
+          <svg viewBox="0 0 220 160" xmlns="http://www.w3.org/2000/svg">
+            <!-- Left wing -->
+            <path d="M110 62 Q75 32 18 48 Q48 54 72 70 Z" fill="#1a5c35"/>
+            <path d="M110 67 Q78 42 30 56 Q56 61 78 75 Z" fill="#145028"/>
+            <!-- Right wing -->
+            <path d="M110 62 Q145 32 202 48 Q172 54 148 70 Z" fill="#1a5c35"/>
+            <path d="M110 67 Q142 42 190 56 Q164 61 142 75 Z" fill="#145028"/>
+            <!-- Tail feathers left -->
+            <path d="M97 114 Q84 132 72 142 Q88 132 100 118 Z" fill="#1a5c35"/>
+            <!-- Tail feathers right -->
+            <path d="M123 114 Q136 132 148 142 Q132 132 120 118 Z" fill="#1a5c35"/>
+            <!-- Eagle head (white) -->
+            <ellipse cx="110" cy="50" rx="13" ry="15" fill="#f0ede0"/>
+            <!-- Beak -->
+            <path d="M117 52 L125 56 L117 58 Z" fill="#e8a020"/>
+            <!-- Eye -->
+            <circle cx="114" cy="48" r="2.2" fill="#222"/>
+            <!-- Eagle body -->
+            <ellipse cx="110" cy="75" rx="16" ry="20" fill="#2a2a2a"/>
+
+            <!-- Shield outline -->
+            <path d="M90 70 L90 108 Q90 116 110 120 Q130 116 130 108 L130 70 Z" fill="#c0392b"/>
+            <!-- Left green stripe -->
+            <path d="M90 70 L90 108 Q90 114 99 118 L99 70 Z" fill="#1a5c35"/>
+            <!-- Right blue stripe -->
+            <path d="M121 70 L121 118 Q130 114 130 108 L130 70 Z" fill="#1a3a8c"/>
+            <!-- Anchor vertical -->
+            <line x1="110" y1="78" x2="110" y2="108" stroke="#0a1f5c" stroke-width="2.5" stroke-linecap="round"/>
+            <!-- Anchor ring -->
+            <circle cx="110" cy="81" r="4.5" fill="none" stroke="#0a1f5c" stroke-width="2"/>
+            <!-- Anchor crossbar -->
+            <line x1="104" y1="86" x2="116" y2="86" stroke="#0a1f5c" stroke-width="2" stroke-linecap="round"/>
+            <!-- Anchor feet -->
+            <path d="M103 106 Q110 111 117 106" fill="none" stroke="#0a1f5c" stroke-width="2" stroke-linecap="round"/>
+            <line x1="104" y1="107" x2="102" y2="102" stroke="#0a1f5c" stroke-width="1.5" stroke-linecap="round"/>
+            <line x1="116" y1="107" x2="118" y2="102" stroke="#0a1f5c" stroke-width="1.5" stroke-linecap="round"/>
+
+            <!-- Wave ribbons below shield -->
+            <path d="M68 126 Q88 118 110 126 Q132 134 152 126" fill="none" stroke="#1a5c35" stroke-width="5.5" stroke-linecap="round"/>
+            <path d="M63 137 Q88 128 110 136 Q132 144 157 136" fill="none" stroke="#1a3a8c" stroke-width="4.5" stroke-linecap="round"/>
+            <path d="M66 147 Q90 138 110 145 Q132 152 154 145" fill="none" stroke="#555" stroke-width="3" stroke-linecap="round"/>
+          </svg>
+        </div>
+
+        <!-- Org name -->
+        <div class="idcard-title">Renewed Hope Youth Coalition</div>
+
+        <!-- Photo upload area -->
+        <div class="idcard-photo" id="idcard-photo">
+          <svg class="idcard-photo-icon" viewBox="0 0 52 42" xmlns="http://www.w3.org/2000/svg">
+            <rect x="2" y="10" width="48" height="30" rx="5" fill="#888"/>
+            <path d="M17 10 L20 4 L32 4 L35 10 Z" fill="#888"/>
+            <circle cx="26" cy="25" r="9" fill="#fff" opacity="0.25"/>
+            <circle cx="26" cy="25" r="5.5" fill="#fff" opacity="0.35"/>
+          </svg>
+          <span class="idcard-photo-placeholder">Upload Photo</span>
+        </div>
+
+        <!-- Member info -->
+        <div class="idcard-info">
+          <h4 id="idcard-name">John Doe</h4>
+          <div class="idcard-info-divider"></div>
+          <p id="idcard-role">Member</p>
+        </div>
+
+      </div>
+      <!-- ══════════════ END FRONT ══════════════ -->
+
+
+      <!-- ══════════════ BACK ══════════════ -->
+      <div class="idcard-face idcard-back">
+
+        <div class="idcard-note">
+          This Membership ID card is property of the
+          <strong>Renewed Hope Youth Coalition.</strong>
+          Please protect this card and return it
+          to RHYC if found.
+        </div>
+
+        <div class="idcard-signature">
+          <div class="idcard-signature-script">Bright Kenneth</div>
+          <div class="idcard-sig-line"></div>
+          <span id="idcard-sig-name">Bright Kenneth</span>
+          <span class="idcard-signature-title">National Coordinator</span>
+        </div>
+
+      </div>
+      <!-- ══════════════ END BACK ══════════════ -->
+
+    </div><!-- /.idcard-body -->
+
+    <div class="modal-actions">
+      <button class="btn-download" id="download-id-card-button">Download ID Card</button>
+    </div>
+
+  </div><!-- /.idcard-panel -->
+</div><!-- /.idcard-modal -->
+
+</body>
+</html>

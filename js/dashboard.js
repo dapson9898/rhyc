@@ -31,7 +31,7 @@ function renderIdCard(member) {
   currentMember = member;
   idCardName.textContent = `${member.firstName} ${member.lastName}`;
   idCardRole.textContent = `Role: ${member.role || 'member'}`;
-  idCardMemberId.textContent = `ID: ${member.memberId || 'RHYC0000'}`;
+  // idCardMemberId.textContent = `ID: ${member.memberId || 'RHYC0000'}`;
 
   idCardPhoto.innerHTML = member.passportPhotoUrl
     ? `<img src="${member.passportPhotoUrl}" alt="Member photo" />`
@@ -40,7 +40,8 @@ function renderIdCard(member) {
 
 function openIdCard() {
   if (!currentMember) return;
-  idCardModal.classList.add("open");
+  // idCardModal.classList.add("open");
+  alert("Comming soon")
 }
 
 function closeIdCard() {
@@ -157,8 +158,59 @@ async function loadMemberProfile(uid) {
   }
   currentMember = member;
   renderIdCard(member);
-  welcomeMessage.textContent = `Welcome back, ${member.firstName || 'member'}!`;
+  welcomeMessage.innerHTML = `Welcome back, <span style="text-transform: uppercase">${member.firstName || 'member'}</span> !`;
   memberDetails.textContent = `Member ID: ${member.memberId || 'RHYC0000'} · ${member.isApcMemberBoolean ? 'APC member' : 'Non-APC member'} · ${member.stateOfResidence || 'Unknown location'}`;
+  memberDetails.innerHTML = 
+  `
+
+  <div style="background: #ffffff; border: 0.5px solid #d0d5dd; border-radius: 12px; padding: 2rem 1.75rem; max-width: 520px; margin: 0 auto; text-align: center;">
+
+  <!-- Checkmark icon -->
+  <div style="width: 52px; height: 52px; border-radius: 50%; background: #e8f5ee; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.25rem;">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M5 13l4 4L19 7" stroke="#1a6b3a" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </div>
+
+  <!-- Label -->
+  <p style="font-size: 13px; font-weight: 500; color: #1a6b3a; letter-spacing: 0.04em; text-transform: uppercase; margin: 0 0 0.5rem;">Registration successful</p>
+
+  <!-- Greeting -->
+  <p style="font-size: 20px; font-weight: 500; color: #1a1a2e; margin: 0 0 1.25rem; line-height: 1.4;">
+    Welcome, ${member.gender == "male" ? "Mr." : member.gender == "female" ? "Mrs." : ""}
+    <span style="text-transform: uppercase;">${member.firstName}</span>
+  </p>
+
+  <!-- Subtitle -->
+  <p style="font-size: 14px; color: #555; line-height: 1.75; margin: 0 0 1.5rem;">
+    You have successfully registered for the youth coalition program.
+  </p>
+
+  <!-- Role + ID pills -->
+  <div style="display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; margin-bottom: 1.5rem;">
+    <div style="background: #f0f8f3; border: 0.5px solid #b6ddc5; border-radius: 8px; padding: 8px 16px; display: flex; flex-direction: column; align-items: center; gap: 2px;">
+      <span style="font-size: 11px; color: #1a6b3a; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em;">Role</span>
+      <span style="font-size: 14px; font-weight: 500; color: #145530;">${member.role}</span>
+    </div>
+    <div style="background: #f0f8f3; border: 0.5px solid #b6ddc5; border-radius: 8px; padding: 8px 16px; display: flex; flex-direction: column; align-items: center; gap: 2px;">
+      <span style="font-size: 11px; color: #1a6b3a; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em;">Member ID</span>
+      <span style="font-size: 14px; font-weight: 500; color: #145530;">${member.memberId}</span>
+    </div>
+  </div>
+
+  <!-- Notice banner -->
+  <div style="background: #fdf6ef; border: 0.5px solid #f0c899; border-radius: 8px; padding: 10px 14px; margin-bottom: 1.5rem; display: flex; align-items: flex-start; gap: 10px; text-align: left;">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" style="flex-shrink: 0; margin-top: 1px;" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="12" cy="12" r="10" stroke="#e07b20" stroke-width="1.8"/>
+      <line x1="12" y1="8" x2="12" y2="12.5" stroke="#e07b20" stroke-width="2" stroke-linecap="round"/>
+      <circle cx="12" cy="16" r="1.1" fill="#e07b20"/>
+    </svg>
+    <span style="font-size: 13px; color: #7a4210; line-height: 1.6;">Your ID card will be available soon. You may log out now.</span>
+  </div>
+
+</div>
+
+  `
 }
 
 function handleLogout() {
