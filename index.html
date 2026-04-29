@@ -7,6 +7,17 @@
   <link rel="stylesheet" href="style.css">
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Open+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
 </head>
+<style>
+  .footer-contact{
+    display: flex; 
+    flex-direction: column;
+    justify-content: right;
+    /* font-size: .8rem; */
+    font: .9rem sans-serif;
+    letter-spacing: .7px;
+    color: gray;
+  }
+</style>
 <body class="page-index">
  
 <!-- HEADER -->
@@ -114,6 +125,7 @@
       <div class="id-card-section-title">
         <span class="icon">📋</span> Member Resources
       </div>
+      
       <div class="resources-inner">
         <div class="resources-icon">📄📂</div>
         <p>Access Resources &amp; Updates</p>
@@ -127,13 +139,20 @@
  
 <!-- FOOTER -->
 <footer>
-  <div class="footer-links">
-    <a href="#">Privacy Policy</a>
-    <a href="#">Contact Support</a>
+  <div class="footer-inner">
+    <div class="footer-links">
+      <a href="#">Privacy Policy</a>
+      <span class="sep">|</span>
+      <a href="#">Contact Support</a>
+      <span class="copy">© Renewed Hope Youth Coalition, All Rights Reserved.</span>
+    </div>
+    <div class="footer-contact">
+      <p><strong>Contact:</strong> +234 814 695 8232 &nbsp;·&nbsp; +234 803 562 2790 &nbsp;·&nbsp; +234 810 983 7343 &nbsp;·&nbsp; +234 806 788 7690</p>
+      <p><strong>Email:</strong> Renewedhopeyouthcoalition@gmail.com</p>
+    </div>
   </div>
-  <span class="copy">© Renewed Hope Youth Coalition, All Rights Reserved.</span>
 </footer>
- 
+
 <script type="module" src="./js/portal.js"></script>
  
 </body>

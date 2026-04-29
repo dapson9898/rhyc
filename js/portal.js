@@ -53,8 +53,8 @@ function handlePrintID() {
 }
 
 function handleResources() {
-  showAlert('Redirecting to admin resources.');
-  window.location.href = "admin-login.html";
+  // showAlert('Redirecting to admin resources.');
+  window.location.href = "about_us.html";
 }
 
 function attachEvents() {

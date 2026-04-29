@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Renewed Hope Youth Coalition</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --green-dark: #1a6b3a;
+      --green-mid: #28883e;
+      --green-light: #4caf50;
+      --blue: #0b85c8;
+      --red: #c0392b;
+      --white: #ffffff;
+      --off-white: #f7f9f7;
+      --gray-text: #444;
+      --dark: #1a1a2e;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      background: var(--off-white);
+      color: var(--gray-text);
+      overflow-x: hidden;
+    }
+
+    .hero {
+      position: relative;
+      min-height: 62vh;
+      background: linear-gradient(160deg, var(--green-dark) 0%, var(--green-mid) 55%, var(--blue) 100%);
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      padding-bottom: 0;
+      overflow: hidden;
+    }
+
+    /* Animated floating orbs in background */
+    .orb {
+      position: absolute;
+      border-radius: 50%;
+      opacity: 0.12;
+      animation: floatOrb 8s ease-in-out infinite;
+      pointer-events: none;
+    }
+    .orb-1 { width: 320px; height: 320px; background: #fff; top: -80px; left: -60px; animation-delay: 0s; }
+    .orb-2 { width: 200px; height: 200px; background: var(--blue); top: 20px; right: -40px; animation-delay: 2s; }
+    .orb-3 { width: 140px; height: 140px; background: var(--green-light); bottom: 60px; left: 10%; animation-delay: 4s; }
+    .orb-4 { width: 100px; height: 100px; background: #fff; bottom: 40px; right: 15%; animation-delay: 1.5s; }
+
+    @keyframes floatOrb {
+      0%, 100% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(-30px) scale(1.06); }
+    }
+
+    /* Watermark pattern */
+    .hero-watermark {
+      position: absolute;
+      inset: 0;
+      background-image: repeating-linear-gradient(
+        45deg,
+        rgba(255,255,255,0.03) 0px,
+        rgba(255,255,255,0.03) 1px,
+        transparent 1px,
+        transparent 28px
+      ),
+      url("https://static.nc-img.com/pp/cms/domain-name-search/images/banner.a6349ec79a534f740bebc287b2851abc.svg");
+      background-position: center;
+      background-size: auto, cover;
+      pointer-events: none;
+    }
+
+    /* Curved bottom wave */
+    .hero-wave {
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 100%;
+      overflow: hidden;
+      line-height: 0;
+    }
+    .hero-wave svg { display: block; width: 100%; }
+
+    /* Circle photo */
+    .photo-wrap {
+      position: relative;
+      z-index: 5;
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      width: 100%;
+      padding-bottom: 0;
+    }
+
+    .photo-ring {
+      position: relative;
+      width: clamp(240px, 48vw, 400px);
+      aspect-ratio: 1;
+      animation: floatPhoto 6s ease-in-out infinite;
+    }
+
+    @keyframes floatPhoto {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-18px); }
+    }
+
+    .photo-ring::before {
+      content: '';
+      position: absolute;
+      inset: -8px;
+      border-radius: 50%;
+      background: conic-gradient(var(--green-light), var(--blue), var(--green-dark), var(--green-light));
+      animation: rotateBorder 6s linear infinite;
+      z-index: 0;
+    }
+
+    @keyframes rotateBorder {
+      to { transform: rotate(360deg); }
+    }
+
+    .photo-inner {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      overflow: hidden;
+      background: #cde8d6;
+      border: 6px solid #fff;
+    }
+
+    .photo-inner img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .content {
+      position: relative;
+      background: var(--white);
+      padding: clamp(2rem, 6vw, 4rem) clamp(1.25rem, 8vw, 6rem) 3rem;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    /* Decorative watermark logo shape */
+    .content-watermark {
+      position: absolute;
+      right: -20px;
+      bottom: 60px;
+      width: clamp(160px, 28vw, 260px);
+      opacity: 0.04;
+      pointer-events: none;
+    }
+
+    /* Statement block */
+    .statement {
+      margin-bottom: clamp(2rem, 5vw, 3.5rem);
+      opacity: 0;
+      transform: translateY(40px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .statement.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .statement-label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .statement-label h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.35rem, 3.5vw, 1.9rem);
+      font-weight: 700;
+      letter-spacing: 0.01em;
+      line-height: 1;
+    }
+
+    .label-keyword {
+      color: var(--red);
+    }
+    .label-rest {
+      color: var(--dark);
+    }
+
+    /* Animated underline bar */
+    .label-line {
+      flex: 1;
+      height: 2px;
+      background: linear-gradient(90deg, currentColor 0%, transparent 100%);
+      border-radius: 2px;
+      transform-origin: left;
+      transform: scaleX(0);
+      transition: transform 0.8s ease 0.3s;
+    }
+    .statement.visible .label-line { transform: scaleX(1); }
+
+    .vision-line { color: var(--red); }
+    .mission-line { color: var(--blue); }
+    .mission-line .label-keyword { color: var(--blue); }
+
+    .statement p {
+      font-size: clamp(0.92rem, 2.2vw, 1.05rem);
+      line-height: 1.85;
+      font-weight: 400;
+      color: #333;
+      text-align: justify;
+      border-bottom: 1.5px solid #e0e0e0;
+      padding-bottom: 1.5rem;
+    }
+
+    .page-number {
+      position: fixed;
+      bottom: 120px;
+      right: clamp(12px, 3vw, 32px);
+      width: 44px;
+      height: 44px;
+      background: var(--dark);
+      color: #fff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      font-weight: 700;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+      z-index: 100;
+    }
+
+    footer {
+      background: var(--dark);
+      color: rgba(255,255,255,0.75);
+      padding: clamp(1.5rem, 4vw, 2.5rem) clamp(1.25rem, 6vw, 4rem);
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Subtle animated stripe accent at top of footer */
+    footer::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--green-dark), var(--blue), var(--green-light), var(--red), var(--green-dark));
+      background-size: 300% 100%;
+      animation: shiftGradient 6s linear infinite;
+    }
+
+    @keyframes shiftGradient {
+      0% { background-position: 0% 50%; }
+      100% { background-position: 300% 50%; }
+    }
+
+    .footer-inner {
+      max-width: 900px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.25rem;
+    }
+
+    .footer-links {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px 20px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      padding-bottom: 1rem;
+    }
+
+    .footer-links a {
+      color: rgba(255,255,255,0.65);
+      text-decoration: none;
+      font-size: 0.82rem;
+      font-weight: 500;
+      letter-spacing: 0.03em;
+      transition: color 0.25s;
+    }
+    .footer-links a:hover { color: var(--green-light); }
+
+    .footer-links .sep {
+      color: rgba(255,255,255,0.25);
+      font-size: 0.75rem;
+    }
+
+    .copy {
+      font-size: 0.78rem;
+      color: rgba(255,255,255,0.4);
+      flex-basis: 100%;
+      margin-top: 2px;
+    }
+
+    .footer-contact {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .footer-contact p {
+      font-size: 0.8rem;
+      color: rgba(255,255,255,0.5);
+      line-height: 1.7;
+    }
+
+    .footer-contact p strong {
+      color: rgba(255,255,255,0.75);
+      font-weight: 500;
+    }
+
+    .scroll-top {
+      position: fixed;
+      bottom: 24px;
+      right: clamp(12px, 3vw, 32px);
+      width: 44px;
+      height: 44px;
+      background: var(--green-dark);
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 16px rgba(26,107,58,0.4);
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.3s, transform 0.3s;
+      z-index: 200;
+    }
+    .scroll-top.show { opacity: 1; transform: translateY(0); }
+    .scroll-top:hover { background: var(--green-mid); }
+    .scroll-top svg { width: 18px; height: 18px; }
+
+    #particles {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .particle {
+      position: absolute;
+      border-radius: 50%;
+      opacity: 0;
+      animation: riseParticle linear infinite;
+    }
+
+    @keyframes riseParticle {
+      0%   { transform: translateY(100vh) scale(0.5); opacity: 0; }
+      10%  { opacity: 0.35; }
+      90%  { opacity: 0.15; }
+      100% { transform: translateY(-20vh) scale(1.2); opacity: 0; }
+    }
+
+    @media (max-width: 600px) {
+      .hero { min-height: 50vh; }
+      .photo-ring { width: clamp(200px, 70vw, 300px); }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Floating particles canvas -->
+<div id="particles"></div>
+
+<!-- ══ HERO ══ -->
+<section class="hero">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+  <div class="orb orb-4"></div>
+  <div class="hero-watermark"></div>
+
+  <div class="photo-wrap">
+    <div class="photo-ring">
+      <div class="photo-inner">
+        <img src="https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcRwG8Em5nE6rhWjyEVx3s-3xdGeQmGuf_q4Is3Hw7xpAdtdSIpA" alt="Renewed Hope Youth Coalition members laughing together" />
+      </div>
+    </div>
+  </div>
+
+  <div class="hero-wave">
+    <svg viewBox="0 0 1200 80" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0,40 C200,80 400,0 600,40 C800,80 1000,0 1200,40 L1200,80 L0,80 Z" fill="#ffffff"/>
+    </svg>
+  </div>
+</section>
+
+<!-- ══ CONTENT ══ -->
+<main style="position:relative; background:#fff;">
+  <div class="content">
+
+    <!-- Watermark SVG shape -->
+    <svg class="content-watermark" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+      <polygon points="100,10 190,55 190,145 100,190 10,145 10,55" fill="#1a6b3a"/>
+    </svg>
+
+    <!-- VISION -->
+    <div class="statement" id="stmt-vision">
+      <div class="statement-label">
+        <h2>
+          <span class="label-keyword">VISION</span>
+          <span class="label-rest"> STATEMENT</span>
+        </h2>
+        <div class="label-line vision-line"></div>
+      </div>
+      <p>
+        To build a united, empowered, and politically conscious generation of Nigerian youth
+        who are actively engaged in governance, promoting national unity, and driving the
+        continuity of the Renewed Hope Agenda through purposeful participation and service
+        to the nation.
+      </p>
+    </div>
+
+    <!-- MISSION -->
+    <div class="statement mission-line" id="stmt-mission">
+      <div class="statement-label">
+        <h2>
+          <span class="label-keyword">MISSION</span>
+          <span class="label-rest"> STATEMENT</span>
+        </h2>
+        <div class="label-line mission-line"></div>
+      </div>
+      <p>
+        To mobilize and inspire Nigerian youth to take an active role in governance and
+        democracy by bridging the gap between the youth and government, advocating for
+        youth interests, and supporting the re-election of the President to sustain the progress,
+        stability, and transformation of Nigeria under the Renewed Hope administration.
+      </p>
+    </div>
+
+  </div><!-- /.content -->
+
+  <!-- <div class="page-number">3</div> -->
+</main>
+
+<!-- ══ FOOTER ══ -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-links">
+      <a href="#">Privacy Policy</a>
+      <span class="sep">|</span>
+      <a href="#">Contact Support</a>
+      <span class="copy">© Renewed Hope Youth Coalition, All Rights Reserved.</span>
+    </div>
+    <div class="footer-contact">
+      <p><strong>Contact:</strong> +234 814 695 8232 &nbsp;·&nbsp; +234 803 562 2790 &nbsp;·&nbsp; +234 810 983 7343 &nbsp;·&nbsp; +234 806 788 7690</p>
+      <p><strong>Email:</strong> Renewedhopeyouthcoalition@gmail.com</p>
+    </div>
+  </div>
+</footer>
+
+<!-- Scroll to top -->
+<button class="scroll-top" id="scrollTop" aria-label="Scroll to top" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+    <polyline points="18 15 12 9 6 15"/>
+  </svg>
+</button>
+
+<script>
+  /* ── Intersection Observer: reveal statements ── */
+  const stmts = document.querySelectorAll('.statement');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); } });
+  }, { threshold: 0.2 });
+  stmts.forEach((el, i) => {
+    el.style.transitionDelay = `${i * 0.18}s`;
+    io.observe(el);
+  });
+
+  /* ── Scroll-to-top button visibility ── */
+  const btn = document.getElementById('scrollTop');
+  window.addEventListener('scroll', () => {
+    btn.classList.toggle('show', window.scrollY > 250);
+  });
+
+  /* ── Floating particles ── */
+  const container = document.getElementById('particles');
+  const colors = ['#1a6b3a','#28883e','#4caf50','#0b85c8','#c0392b','#ffffff'];
+  const count = 22;
+
+  for (let i = 0; i < count; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    const size = Math.random() * 10 + 4;
+    const color = colors[Math.floor(Math.random() * colors.length)];
+    const left = Math.random() * 100;
+    const delay = Math.random() * 14;
+    const duration = Math.random() * 12 + 10;
+
+    p.style.cssText = `
+      width: ${size}px;
+      height: ${size}px;
+      background: ${color};
+      left: ${left}%;
+      bottom: 0;
+      animation-duration: ${duration}s;
+      animation-delay: ${delay}s;
+    `;
+    container.appendChild(p);
+  }
+</script>
+</body>
+</html>
