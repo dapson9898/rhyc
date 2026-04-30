@@ -67,7 +67,7 @@ signupForm.addEventListener("submit", async (event) => {
   const vinVoterIDNumber = document.getElementById("vinvoterIDNumber").value.trim();
   const isApcMemberBoolean = document.getElementById("isApcMemberBoolean").value === "true";
   const gender = document.getElementById("gender").value;
-  const passportPhotoFileupload = document.getElementById("passportPhotoFileupload").files[0];
+  // const passportPhotoFileupload = document.getElementById("passportPhotoFileupload").files[0];
 
   if (!email || !password || !firstName || !lastName || !phoneNumber || !stateOfResidence || !stateOfOrigin || !localGovernment || !ninNationalIDNumber || !vinVoterIDNumber || !gender || !document.getElementById("isApcMemberBoolean").value) {
     showMessage("Please fill in all required fields before continuing.", "error");
@@ -81,9 +81,9 @@ signupForm.addEventListener("submit", async (event) => {
     const passwordHash = await hashPassword(password);
     let passportPhotoUrl = "";
 
-    if (passportPhotoFileupload) {
-      passportPhotoUrl = "./rhyc.png";
-    }
+    // if (passportPhotoFileupload) {
+    //   passportPhotoUrl = "./rhyc.png";
+    // }
 
     await setDoc(doc(db, "members", uid), {
       email,
