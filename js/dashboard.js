@@ -183,7 +183,7 @@ async function loadMemberProfile(uid) {
 
   <!-- Subtitle -->
   <p style="font-size: 14px; color: #555; line-height: 1.75; margin: 0 0 1.5rem;">
-    You have successfully registered for the youth coalition program.
+    You have successfully registered for RHYC membership.
   </p>
 
   <!-- Role + ID pills -->
